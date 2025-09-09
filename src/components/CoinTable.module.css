@@ -1,0 +1,135 @@
+.coinTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  background-color: white;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.coinTable thead {
+  background-color: #f9fafb;
+}
+
+.coinTable th,
+.coinTable td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.coinTable th {
+  font-weight: 500;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+}
+
+.coinTable tbody tr {
+  transition: background-color 0.2s;
+}
+
+.coinTable tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+/* Favorite button */
+.favoriteButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.favoriteButton svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.favoriteButton.favorite svg {
+  fill: #f59e0b;
+  color: #f59e0b;
+}
+
+.favoriteButton:not(.favorite) svg {
+  color: #9ca3af;
+}
+
+/* Coin name cell */
+.coinNameCell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.coinName {
+  font-weight: 500;
+  color: #111827;
+}
+
+.coinSymbol {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+/* Price and change cells */
+.priceCell {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-weight: 500;
+}
+
+.positiveChange {
+  color: #10b981;
+}
+
+.negativeChange {
+  color: #ef4444;
+}
+
+/* Dark mode */
+:global(.dark) .coinTable {
+  background-color: #1f2937;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+:global(.dark) .coinTable thead {
+  background-color: #111827;
+}
+
+:global(.dark) .coinTable th {
+  color: #9ca3af;
+}
+
+:global(.dark) .coinTable tbody tr {
+  border-bottom-color: #374151;
+}
+
+:global(.dark) .coinTable tbody tr:hover {
+  background-color: #1f2937;
+}
+
+:global(.dark) .coinName {
+  color: #f9fafb;
+}
+
+:global(.dark) .coinSymbol {
+  color: #9ca3af;
+}
+
+:global(.dark) .priceCell {
+  color: #f9fafb;
+}
+
+/* Responsive table */
+@media (max-width: 768px) {
+  .coinTable {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}

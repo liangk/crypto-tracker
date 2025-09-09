@@ -1,9 +1,10 @@
 import { type FC } from 'react';
+import styles from './LoadingSpinner.module.css';
 
 const LoadingSpinner: FC = () => (
-  <div className="flex justify-center items-center p-8 dark:text-white">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-    <span className="ml-2 text-lg">Loading...</span>
+  <div className={styles.loadingSpinner}>
+    <div className={styles.spinner}></div>
+    <span className={styles.loadingText}>Loading...</span>
   </div>
 );
 

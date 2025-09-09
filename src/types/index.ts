@@ -15,6 +15,9 @@ export interface ITicker extends ICoinBase {
   quotes: {
     USD: IQuoteUSD;
   };
+  circulating_supply: number;
+  total_supply: number;
+  max_supply: number | null;
 }
 
 export interface IHistoricalDataPoint {
@@ -54,9 +57,17 @@ export interface IDetailsProps extends IToggleFavoriteProps {
 }
 
 export interface ICoin extends ICoinBase {
-  price?: number;
-  change?: number;
-  volume?: number;
+  price: number;
+  change: number;
+  volume: number;
+  quotes: {
+    USD: {
+      price: number;
+      percent_change_24h: number;
+      volume_24h: number;
+      market_cap: number;
+    };
+  };
 }
 
 export interface ICoinsHook {

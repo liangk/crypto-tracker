@@ -2,10 +2,11 @@ import { type FC, useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeftIcon, StarIcon } from '@heroicons/react/24/outline';
 import { fetchTicker, fetchHistorical } from '../utils/api';
-import { formatPrice, formatPercent, getChangeColor } from '../utils/helpers';
+import { formatPrice, formatPercent } from '../utils/helpers';
 import LoadingSpinner from './common/LoadingSpinner';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import type { IDetailsProps, ITicker, IHistoricalDataPoint, IHistoricalChart } from '../types';
+import styles from './CoinDetails.module.css';
 
 const CoinDetails: FC<IDetailsProps> = ({ favorites, toggleFavorite }) => {
   const { id } = useParams<{ id: string }>();
@@ -41,40 +42,106 @@ const CoinDetails: FC<IDetailsProps> = ({ favorites, toggleFavorite }) => {
   }, [id]);
 
   if (loading) return <LoadingSpinner />;
-  if (error) return <div className="text-center text-cryptoRed">Error: {error}</div>;
-  if (!coin) return <div className="text-center">Coin not found</div>;
+  if (error) return <div className={styles.error}>Error: {error}</div>;
+  if (!coin) return <div className={styles.coinNotFound}>Coin not found</div>;
+
+  const priceChange = coin.quotes?.USD?.percent_change_24h ?? 0;
+  const priceChangeClass = priceChange >= 0 ? styles.positive : styles.negative;
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md max-w-4xl mx-auto">
-      <Link to="/" className="flex items-center text-primary hover:underline mb-4">
-        <ArrowLeftIcon className="h-5 w-5 mr-1" aria-hidden="true" /> Back to Dashboard
+    <div className={styles.container}>
+      <Link to="/" className={styles.backLink}>
+        <ArrowLeftIcon className={styles.backIcon} aria-hidden="true" />
+        Back to Dashboard
       </Link>
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-3xl font-bold">{coin.name} ({coin.symbol.toUpperCase()})</h1>
-        <button onClick={() => id && toggleFavorite(id)} aria-label={`Toggle favorite for ${coin.name}`}>
-          <StarIcon className={`h-6 w-6 ${isFavorite ? 'text-yellow-400 fill-current' : 'text-gray-400'}`} />
+      
+      <div className={styles.header}>
+        <h1 className={styles.coinTitle}>
+          {coin.name} ({coin.symbol.toUpperCase()})
+        </h1>
+        <button 
+          onClick={() => id && toggleFavorite(id)} 
+          className={`${styles.favoriteButton} ${isFavorite ? styles.favorite : ''}`}
+          aria-label={`${isFavorite ? 'Remove from' : 'Add to'} favorites: ${coin.name}`}
+        >
+          <StarIcon />
         </button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <div>
-          <p className="text-2xl font-semibold">{formatPrice(coin.quotes?.USD?.price)}</p>
-          <p className={`${getChangeColor(coin.quotes?.USD?.percent_change_24h)} text-lg font-semibold`}>
-            {formatPercent(coin.quotes?.USD?.percent_change_24h)}
-          </p>
-          <p>Market Cap: {formatPrice(coin.quotes?.USD?.market_cap)}</p>
-          <p>Volume 24h: {formatPrice(coin.quotes?.USD?.volume_24h)}</p>
+
+      <div className={styles.priceSection}>
+        <p className={styles.price}>{formatPrice(coin.quotes?.USD?.price)}</p>
+        <p className={`${styles.priceChange} ${priceChangeClass}`}>
+          {formatPercent(priceChange)} (24h)
+        </p>
+      </div>
+
+      <div className={styles.statsGrid}>
+        <div className={styles.statItem}>
+          <div className={styles.statLabel}>Market Cap</div>
+          <div className={styles.statValue}>
+            {formatPrice(coin.quotes?.USD?.market_cap)}
+          </div>
+        </div>
+        <div className={styles.statItem}>
+          <div className={styles.statLabel}>Volume (24h)</div>
+          <div className={styles.statValue}>
+            {formatPrice(coin.quotes?.USD?.volume_24h)}
+          </div>
+        </div>
+        <div className={styles.statItem}>
+          <div className={styles.statLabel}>Circulating Supply</div>
+          <div className={styles.statValue}>
+            {coin.circulating_supply.toLocaleString()} {coin.symbol.toUpperCase()}
+          </div>
+        </div>
+        <div className={styles.statItem}>
+          <div className={styles.statLabel}>Total Supply</div>
+          <div className={styles.statValue}>
+            {coin.total_supply.toLocaleString()} {coin.symbol.toUpperCase()}
+          </div>
         </div>
       </div>
-      <h2 className="text-xl font-bold mb-4">Price History (Last Month)</h2>
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={historical}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
-          <YAxis />
-          <Tooltip />
-          <Line type="monotone" dataKey="price" stroke="#8884d8" strokeWidth={2} />
-        </LineChart>
-      </ResponsiveContainer>
+
+      <div className={styles.chartContainer}>
+        <h2 className={styles.chartTitle}>Price History (Last Month)</h2>
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={historical}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+            <XAxis 
+              dataKey="date" 
+              stroke="#6b7280"
+              tick={{ fontSize: 12 }}
+            />
+            <YAxis 
+              width={80}
+              stroke="#6b7280"
+              tickFormatter={(value) => `$${value}`}
+              tick={{ fontSize: 12 }}
+            />
+            <Tooltip 
+              formatter={(value) => [`$${value}`, 'Price']}
+              labelFormatter={(label) => `Date: ${label}`}
+              contentStyle={{
+                backgroundColor: 'white',
+                border: '1px solid #e5e7eb',
+                borderRadius: '0.375rem',
+                padding: '0.5rem',
+                fontSize: '0.875rem',
+              }}
+              labelStyle={{ color: '#111827', fontWeight: 500 }}
+              itemStyle={{ color: '#111827' }}
+            />
+            <Line 
+              type="monotone" 
+              dataKey="price" 
+              stroke="#3b82f6" 
+              strokeWidth={2} 
+              dot={false} 
+              activeDot={{ r: 6, strokeWidth: 2 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 };

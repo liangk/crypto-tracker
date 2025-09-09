@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
+import styles from './ErrorBoundary.module.css';
 
 interface IErrorBoundaryProps {
   children: ReactNode;
@@ -26,11 +27,16 @@ class ErrorBoundary extends Component<IErrorBoundaryProps, IErrorBoundaryState> 
   public render(): ReactNode {
     if (this.state.hasError) {
       return (
-        <div className="p-8 text-center dark:text-white">
-          <h2 className="text-xl font-bold mb-2">Something went wrong.</h2>
-          <p>{this.state.error?.message || 'Unknown error'}</p>
-          <button onClick={() => window.location.reload()} className="mt-4 bg-primary text-white px-4 py-2 rounded">
-            Reload
+        <div className={styles.errorBoundary}>
+          <h2 className={styles.errorTitle}>Something went wrong.</h2>
+          <p className={styles.errorMessage}>
+            {this.state.error?.message || 'An unknown error occurred. Please try reloading the page.'}
+          </p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className={styles.reloadButton}
+          >
+            Reload Page
           </button>
         </div>
       );

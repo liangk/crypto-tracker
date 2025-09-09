@@ -36,7 +36,7 @@ export const fetchTicker = async (coinId: string): Promise<ITicker | null> => {
   }
 };
 
-export const fetchHistorical = async (coinId: string, startDate: string = '2025-08-01'): Promise<IHistoricalDataPoint[]> => {
+export const fetchHistorical = async (coinId: string, startDate: string = '2025-09-09'): Promise<IHistoricalDataPoint[]> => {
   try {
     const { data } = await apiClient.get<IHistoricalDataPoint[]>(`/coins/${coinId}/ohlcv/historical?start=${startDate}`);
     return data;

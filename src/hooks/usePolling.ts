@@ -11,11 +11,23 @@ export const usePolling = (coins: ICoin[], setCoins: React.Dispatch<React.SetSta
         const tickerRes: ITicker[] = await fetchTickers();
         const tickerMap: Map<string, ITicker> = new Map(tickerRes.map((t: ITicker) => [t.id, t]));
         setCoins((prevCoins: ICoin[]) =>
-          prevCoins.map((coin: ICoin) => ({
-            ...coin,
-            price: tickerMap.get(coin.id)?.quotes?.USD?.price,
-            change: tickerMap.get(coin.id)?.quotes?.USD?.percent_change_24h,
-          }))
+          prevCoins.map((coin: ICoin) => {
+            const ticker = tickerMap.get(coin.id);
+            return {
+              ...coin,
+              price: ticker?.quotes?.USD?.price || 0,
+              change: ticker?.quotes?.USD?.percent_change_24h || 0,
+              volume: ticker?.quotes?.USD?.volume_24h || 0,
+              quotes: ticker?.quotes || {
+                USD: {
+                  price: ticker?.quotes?.USD?.price || 0,
+                  percent_change_24h: ticker?.quotes?.USD?.percent_change_24h || 0,
+                  volume_24h: ticker?.quotes?.USD?.volume_24h || 0,
+                  market_cap: ticker?.quotes?.USD?.market_cap || 0
+                }
+              }
+            };
+          })
         );
       } catch (error: unknown) {
         console.error('Polling error:', error);
