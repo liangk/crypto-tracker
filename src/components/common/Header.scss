@@ -1,0 +1,17 @@
+.header {
+  background: linear-gradient(90deg, var(--color-primary) 0%, #1564c7 100%);
+  color: white; padding: 1rem; box-shadow: var(--shadow-md);
+
+  .headerContainer { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 1rem;
+    .headerTitle { font-size: 1.5rem; font-weight: 700; color: white; text-decoration: none; }
+    .headerActions { display: flex; align-items: center; gap: 1rem;
+      .favoritesCount { display: flex; align-items: center; gap: 0.5rem; color: white; font-weight: 500;
+        svg { width: 1.25rem; height: 1.25rem; flex-shrink: 0; }
+      }
+      .themeToggle { background: none; border: none; color: white; cursor: pointer; padding: 0.5rem; display: flex; align-items: center; justify-content: center; transition: opacity 0.2s;
+        svg { width: 1.5rem; height: 1.5rem; }
+      }
+      .themeToggle:hover { opacity: 0.8; }
+    }
+  }
+}

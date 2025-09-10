@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { fetchCoins, fetchTickers } from '../utils/api';
-import type { ICoin, ICoinsHook, ITicker, ICoinBase } from '../types';
+import { fetchTickers } from '../utils/api';
+import type { ICoin, ICoinsHook, ITicker } from '../types';
 
 export const useCoins = (initialLimit: number = 20): ICoinsHook => {
   const [coins, setCoins] = useState<ICoin[]>([]);
@@ -12,19 +12,17 @@ export const useCoins = (initialLimit: number = 20): ICoinsHook => {
       try {
         setLoading(true);
         setError(null);
-        const [coinRes, tickerRes] = await Promise.all([fetchCoins(100), fetchTickers()]);
-        const tickerMap: Map<string, ITicker> = new Map(tickerRes.map((t: ITicker) => [t.id, t]));
-        const enrichedCoins: ICoin[] = coinRes
+        const tickerRes = await fetchTickers();
+        const enrichedCoins: ICoin[] = tickerRes
           .slice(0, initialLimit)
-          .map((coin: ICoinBase) => {
-            const ticker = tickerMap.get(coin.id);
+          .map((coin: ITicker) => {
             return {
               ...coin,
-              price: ticker?.price || 0,
-              change: ticker?.percent_change_24h || 0,
-              volume: ticker?.total_volume || 0,
-              percent_change_24h: ticker?.percent_change_24h || 0,
-              market_cap: ticker?.market_cap || 0
+              price: coin.price || 0,
+              change: coin.percent_change_24h || 0,
+              volume: coin.total_volume || 0,
+              percent_change_24h: coin.percent_change_24h || 0,
+              market_cap: coin.market_cap || 0
             };
           });
         console.log(enrichedCoins);

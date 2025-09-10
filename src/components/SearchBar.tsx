@@ -1,6 +1,6 @@
 import { type FC, useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
-import styles from './SearchBar.module.css';
+import './SearchBar.scss';
 
 interface ISearchBarProps {
   onSearch: (query: string) => void;
@@ -19,16 +19,9 @@ const SearchBar: FC<ISearchBarProps> = ({ onSearch, className = '' }) => {
   }, [query, onSearch]);
 
   return (
-    <div className={`${styles.searchContainer} ${className}`}>
-      <Search className={styles.searchIcon} aria-hidden="true" />
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search coins..."
-        className={styles.searchInput}
-        aria-label="Search coins"
-      />
+    <div className={`searchContainer ${className}`}>
+      <Search className="searchIcon" aria-hidden="true" />
+      <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search coins..." aria-label="Search coins" />
     </div>
   );
 };

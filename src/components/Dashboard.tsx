@@ -6,7 +6,7 @@ import CoinTable from './CoinTable';
 import Favorites from './Favorites';
 import type { ICoin } from '../types';
 import type { IDashboardProps } from '../types';
-import styles from './Dashboard.module.css';
+import './Dashboard.scss';
 
 const Dashboard: FC<IDashboardProps> = ({ favorites, toggleFavorite }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -41,26 +41,21 @@ const Dashboard: FC<IDashboardProps> = ({ favorites, toggleFavorite }) => {
   };
 
   if (loading) return <LoadingSpinner />;
-  if (error) return <div className={styles.error}>Error: {error}</div>;
-
-  const displayCoins: ICoin[] = filteredCoins.length > 0 ? filteredCoins : allCoins;
+  if (error) return <div className="error">Error: {error}</div>;
 
   return (
-    <div className={styles.dashboard}>
-      <SearchBar onSearch={handleSearch} className={styles.searchBar} />
-      <div className={styles.sortContainer}>
-        <select
-          onChange={(e) => handleSort(e.target.value)}
-          value={sortBy}
-          className={styles.sortSelect}
-          aria-label="Sort coins"
-        >
-          <option value="price_asc">Sort by Price Asc</option>
-          <option value="change_desc">Sort by Change Desc</option>
-        </select>
+    <div className="dashboard">
+      <h2 className="title">Crypto markets</h2>
+      <div className="filterContainer">
+        <SearchBar onSearch={handleSearch} className="searchBar" />
+        <div className="sortContainer">
+          <select onChange={(e) => handleSort(e.target.value)} value={sortBy} className="sortSelect" aria-label="Sort coins">
+            <option value="price_asc">Sort by Price Asc</option>
+            <option value="change_desc">Sort by Change Desc</option>
+          </select>
+        </div>
       </div>
-      <h2 className={styles.title}>Top Coins</h2>
-      <CoinTable coins={displayCoins} favorites={favorites} toggleFavorite={toggleFavorite} />
+      <CoinTable coins={filteredCoins} favorites={favorites} toggleFavorite={toggleFavorite} />
       {favorites.length > 0 && <Favorites favorites={favorites} toggleFavorite={toggleFavorite} />}
     </div>
   );
