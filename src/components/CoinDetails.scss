@@ -27,11 +27,11 @@
   margin-right: 0.5rem;
 }
 
-.header {
+.tableHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .coinTitle {
@@ -65,21 +65,13 @@
   color: #9ca3af;
 }
 
-.priceSection {
-  margin-bottom: 2rem;
+.priceSection { margin-bottom: 1rem; display: flex; align-items: center; gap: 2rem;
+  p { margin: 0; }
 }
 
-.price {
-  font-size: 2.25rem;
-  font-weight: 700;
-  margin: 0 0 0.5rem;
-  color: #111827;
-}
+.price { font-size: 2.25rem; font-weight: 700; color: #111827;}
 
-.priceChange {
-  font-size: 1.25rem;
-  font-weight: 600;
-  display: inline-flex;
+.priceChange { font-size: 1.25rem; font-weight: 600; display: inline-flex;
   align-items: center;
 }
 

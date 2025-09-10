@@ -6,7 +6,7 @@ import { formatPrice, formatPercent } from '../utils/helpers';
 import LoadingSpinner from './common/LoadingSpinner';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import type { IDetailsProps, ITicker, IHistoricalDataPoint, IHistoricalChart } from '../types';
-import styles from './CoinDetails.module.css';
+import './CoinDetails.scss';
 
 const CoinDetails: FC<IDetailsProps> = ({ favorites, toggleFavorite }) => {
   const { id } = useParams<{ id: string }>();
@@ -42,68 +42,68 @@ const CoinDetails: FC<IDetailsProps> = ({ favorites, toggleFavorite }) => {
   }, [id]);
 
   if (loading) return <LoadingSpinner />;
-  if (error) return <div className={styles.error}>Error: {error}</div>;
-  if (!coin) return <div className={styles.coinNotFound}>Coin not found</div>;
+  if (error) return <div className="error">Error: {error}</div>;
+  if (!coin) return <div className="coinNotFound">Coin not found</div>;
 
   const priceChange = coin.percent_change_24h ?? 0;
-  const priceChangeClass = priceChange >= 0 ? styles.positive : styles.negative;
+  const priceChangeClass = priceChange >= 0 ? 'positive' : 'negative';
 
   return (
-    <div className={styles.container}>
-      <Link to="/" className={styles.backLink}>
-        <ArrowLeftIcon className={styles.backIcon} aria-hidden="true" />
+    <div className="container">
+      <Link to="/" className="backLink">
+        <ArrowLeftIcon className="backIcon" aria-hidden="true" />
         Back to Dashboard
       </Link>
       
-      <div className={styles.header}>
-        <h1 className={styles.coinTitle}>
+      <div className="tableHeader">
+        <h1 className="coinTitle">
           {coin.name} ({coin.symbol.toUpperCase()})
         </h1>
         <button 
           onClick={() => id && toggleFavorite(id)} 
-          className={`${styles.favoriteButton} ${isFavorite ? styles.favorite : ''}`}
+          className={`favoriteButton ${isFavorite ? 'favorite' : ''}`}
           aria-label={`${isFavorite ? 'Remove from' : 'Add to'} favorites: ${coin.name}`}
         >
           <StarIcon />
         </button>
       </div>
 
-      <div className={styles.priceSection}>
-        <p className={styles.price}>{formatPrice(coin.price)}</p>
-        <p className={`${styles.priceChange} ${priceChangeClass}`}>
+      <div className="priceSection">  
+        <p className="price">{formatPrice(coin.price)}</p>
+        <p className={`priceChange ${priceChangeClass}`}>
           {formatPercent(priceChange)} (24h)
         </p>
       </div>
 
-      <div className={styles.statsGrid}>
-        <div className={styles.statItem}>
-          <div className={styles.statLabel}>Market Cap</div>
-          <div className={styles.statValue}>
+      <div className="statsGrid">
+        <div className="statItem">
+          <div className="statLabel">Market Cap</div>
+          <div className="statValue">
             {formatPrice(coin.market_cap)}
           </div>
         </div>
-        <div className={styles.statItem}>
-          <div className={styles.statLabel}>Volume (24h)</div>
-          <div className={styles.statValue}>
+        <div className="statItem">
+          <div className="statLabel">Volume (24h)</div>
+          <div className="statValue">
             {formatPrice(coin.total_volume)}
           </div>
         </div>
-        <div className={styles.statItem}>
-          <div className={styles.statLabel}>Circulating Supply</div>
-          <div className={styles.statValue}>
+        <div className="statItem">
+          <div className="statLabel">Circulating Supply</div>
+          <div className="statValue">
             {coin.circulating_supply.toLocaleString()} {coin.symbol.toUpperCase()}
           </div>
         </div>
-        <div className={styles.statItem}>
-          <div className={styles.statLabel}>Total Supply</div>
-          <div className={styles.statValue}>
+        <div className="statItem">
+          <div className="statLabel">Total Supply</div>
+          <div className="statValue">
             {coin.total_supply.toLocaleString()} {coin.symbol.toUpperCase()}
           </div>
         </div>
       </div>
 
-      <div className={styles.chartContainer}>
-        <h2 className={styles.chartTitle}>Price History (Last Month)</h2>
+      <div className="chartContainer">
+        <h2 className="chartTitle">Price History (Last Month)</h2>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={historical}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
