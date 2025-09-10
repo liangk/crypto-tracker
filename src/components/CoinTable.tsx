@@ -13,7 +13,7 @@ interface ICoinRowProps {
 }
 
 const CoinRow: FC<ICoinRowProps> = memo(({ coin, isFavorite, toggleFavorite }) => {
-  const changeClass = (coin.quotes?.USD?.percent_change_24h ?? 0) >= 0 ? styles.positiveChange : styles.negativeChange;
+  const changeClass = coin.change >= 0 ? styles.positiveChange : styles.negativeChange;
   
   return (
     <tr className={styles.coinRow}>
@@ -34,9 +34,10 @@ const CoinRow: FC<ICoinRowProps> = memo(({ coin, isFavorite, toggleFavorite }) =
       </td>
       <td className={styles.priceCell}>{formatPrice(coin.price)}</td>
       <td className={`${styles.priceCell} ${changeClass}`}>
-        {formatPercent(coin.quotes?.USD?.percent_change_24h ?? 0)}
+        {formatPercent(coin.change)}
       </td>
       <td className={styles.priceCell}>{formatPrice(coin.volume)}</td>
+      <td className={styles.priceCell}>{formatPrice(coin.market_cap)}</td>
     </tr>
   );
 });
@@ -55,8 +56,9 @@ const CoinTable: FC<ICoinTableProps> = ({ coins, favorites, toggleFavorite }) =>
         <tr>
           <th className={styles.tableHeader}>Coin</th>
           <th className={styles.tableHeader}>Price (USD)</th>
-          <th className={styles.tableHeader}>24h Change</th>
-          <th className={styles.tableHeader}>Volume 24h</th>
+          <th className={styles.tableHeader}>24h %</th>
+          <th className={styles.tableHeader}>24h Volume</th>
+          <th className={styles.tableHeader}>Market Cap</th>
         </tr>
       </thead>
       <tbody>
@@ -71,7 +73,7 @@ const CoinTable: FC<ICoinTableProps> = ({ coins, favorites, toggleFavorite }) =>
           ))
         ) : (
           <tr>
-            <td colSpan={4} className={styles.noResults}>
+            <td colSpan={5} className={styles.noResults}>
               No coins found. Try adjusting your search.
             </td>
           </tr>

@@ -28,7 +28,7 @@ const CoinDetails: FC<IDetailsProps> = ({ favorites, toggleFavorite }) => {
           setHistorical(
             hist.map((h: IHistoricalDataPoint) => ({
               date: new Date(h.time_close).toLocaleDateString(),
-              price: h.quote.USD.close,
+              price: h.close,
             }))
           );
         }
@@ -45,7 +45,7 @@ const CoinDetails: FC<IDetailsProps> = ({ favorites, toggleFavorite }) => {
   if (error) return <div className={styles.error}>Error: {error}</div>;
   if (!coin) return <div className={styles.coinNotFound}>Coin not found</div>;
 
-  const priceChange = coin.quotes?.USD?.percent_change_24h ?? 0;
+  const priceChange = coin.percent_change_24h ?? 0;
   const priceChangeClass = priceChange >= 0 ? styles.positive : styles.negative;
 
   return (
@@ -69,7 +69,7 @@ const CoinDetails: FC<IDetailsProps> = ({ favorites, toggleFavorite }) => {
       </div>
 
       <div className={styles.priceSection}>
-        <p className={styles.price}>{formatPrice(coin.quotes?.USD?.price)}</p>
+        <p className={styles.price}>{formatPrice(coin.price)}</p>
         <p className={`${styles.priceChange} ${priceChangeClass}`}>
           {formatPercent(priceChange)} (24h)
         </p>
@@ -79,13 +79,13 @@ const CoinDetails: FC<IDetailsProps> = ({ favorites, toggleFavorite }) => {
         <div className={styles.statItem}>
           <div className={styles.statLabel}>Market Cap</div>
           <div className={styles.statValue}>
-            {formatPrice(coin.quotes?.USD?.market_cap)}
+            {formatPrice(coin.market_cap)}
           </div>
         </div>
         <div className={styles.statItem}>
           <div className={styles.statLabel}>Volume (24h)</div>
           <div className={styles.statValue}>
-            {formatPrice(coin.quotes?.USD?.volume_24h)}
+            {formatPrice(coin.total_volume)}
           </div>
         </div>
         <div className={styles.statItem}>

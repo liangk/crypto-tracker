@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-// import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
+import styles from './App.module.css';
 import type { IDashboardProps, IDetailsProps } from './types';
 import Header from './components/common/Header';
 import Dashboard from './components/Dashboard';
@@ -31,9 +31,9 @@ function AppContent() {
   const detailsProps: IDetailsProps = { favorites, toggleFavorite };
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+    <div className={`${styles.app_container} ${darkMode ? styles.dark_theme : styles.light_theme}`}>
       <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} favorites={favorites.length} />
-      <main className="container mx-auto p-4">
+      <main className={styles.main_content}>
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Dashboard {...dashboardProps} />} />
           <Route path="/coin/:id" element={<CoinDetails {...detailsProps} />} />

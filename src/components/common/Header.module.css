@@ -1,9 +1,8 @@
 .header {
-  background: linear-gradient(90deg, var(--color-primary) 0%, #2563eb 100%);
+  background: linear-gradient(90deg, var(--color-primary) 0%, #1564c7 100%);
   color: white;
   padding: 1rem;
   box-shadow: var(--shadow-md);
-  width: 100%;
 }
 
 .headerContainer {

@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { fetchTickers } from '../utils/api';
 import type { ICoin, ITicker } from '../types';
 
-export const usePolling = (coins: ICoin[], setCoins: React.Dispatch<React.SetStateAction<ICoin[]>>, interval: number = 30000): void => {
+export const usePolling = (coins: ICoin[], setCoins: React.Dispatch<React.SetStateAction<ICoin[]>>, interval: number = 3000000): void => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -15,17 +15,11 @@ export const usePolling = (coins: ICoin[], setCoins: React.Dispatch<React.SetSta
             const ticker = tickerMap.get(coin.id);
             return {
               ...coin,
-              price: ticker?.quotes?.USD?.price || 0,
-              change: ticker?.quotes?.USD?.percent_change_24h || 0,
-              volume: ticker?.quotes?.USD?.volume_24h || 0,
-              quotes: ticker?.quotes || {
-                USD: {
-                  price: ticker?.quotes?.USD?.price || 0,
-                  percent_change_24h: ticker?.quotes?.USD?.percent_change_24h || 0,
-                  volume_24h: ticker?.quotes?.USD?.volume_24h || 0,
-                  market_cap: ticker?.quotes?.USD?.market_cap || 0
-                }
-              }
+              price: ticker?.price || 0,
+              change: ticker?.percent_change_24h || 0,
+              volume: ticker?.total_volume || 0,
+              percent_change_24h: ticker?.percent_change_24h || 0,
+              market_cap: ticker?.market_cap || 0
             };
           })
         );

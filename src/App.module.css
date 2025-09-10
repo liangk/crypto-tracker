@@ -1,0 +1,27 @@
+.app_container {
+  min-height: 100vh;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.light_theme {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+.dark_theme {
+  background-color: #111827;
+  color: #ffffff;
+}
+
+.main_content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .main_content {
+    padding: 0.5rem;
+  }
+}

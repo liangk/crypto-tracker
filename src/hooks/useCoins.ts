@@ -20,19 +20,14 @@ export const useCoins = (initialLimit: number = 20): ICoinsHook => {
             const ticker = tickerMap.get(coin.id);
             return {
               ...coin,
-              price: ticker?.quotes?.USD?.price || 0,
-              change: ticker?.quotes?.USD?.percent_change_24h || 0,
-              volume: ticker?.quotes?.USD?.volume_24h || 0,
-              quotes: ticker?.quotes || {
-                USD: {
-                  price: ticker?.quotes?.USD?.price || 0,
-                  percent_change_24h: ticker?.quotes?.USD?.percent_change_24h || 0,
-                  volume_24h: ticker?.quotes?.USD?.volume_24h || 0,
-                  market_cap: ticker?.quotes?.USD?.market_cap || 0
-                }
-              }
+              price: ticker?.price || 0,
+              change: ticker?.percent_change_24h || 0,
+              volume: ticker?.total_volume || 0,
+              percent_change_24h: ticker?.percent_change_24h || 0,
+              market_cap: ticker?.market_cap || 0
             };
           });
+        console.log(enrichedCoins);
         setCoins(enrichedCoins);
       } catch (err: unknown) {
         setError(err instanceof Error ? err.message : 'Unknown error');

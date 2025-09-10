@@ -1,4 +1,4 @@
-import { type FC, useState, useEffect, useCallback } from 'react';
+import { type FC, useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import styles from './SearchBar.module.css';
 
@@ -10,17 +10,13 @@ interface ISearchBarProps {
 const SearchBar: FC<ISearchBarProps> = ({ onSearch, className = '' }) => {
   const [query, setQuery] = useState<string>('');
 
-  const debouncedSearch = useCallback(
-    (q: string) => {
-      const timeoutId = setTimeout(() => onSearch(q), 300);
-      return () => clearTimeout(timeoutId);
-    },
-    [onSearch]
-  );
-
   useEffect(() => {
-    debouncedSearch(query);
-  }, [query, debouncedSearch]);
+    const timeoutId = setTimeout(() => {
+      onSearch(query);
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [query, onSearch]);
 
   return (
     <div className={`${styles.searchContainer} ${className}`}>
@@ -29,7 +25,7 @@ const SearchBar: FC<ISearchBarProps> = ({ onSearch, className = '' }) => {
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search coins (e.g., Bitcoin)..."
+        placeholder="Search coins..."
         className={styles.searchInput}
         aria-label="Search coins"
       />
