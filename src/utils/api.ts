@@ -79,7 +79,7 @@ export const fetchHistorical = async (coinId: string, startDate: string = '2025-
     // Map prices to your IHistoricalDataPoint (adjust type below; use time_close as ts, close as price)
     return data.prices.map(([time_close, quote_USD_close]: [number, number]) => ({
       time_close,
-      quote: { USD: { close: quote_USD_close } }
+      close: quote_USD_close
     }));
   } catch (error: unknown) {
     console.error('Error fetching historical data:', error);

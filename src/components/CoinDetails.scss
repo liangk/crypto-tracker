@@ -109,8 +109,41 @@
 }
 
 .chartContainer {
-  height: 400px;
-  margin-top: 2rem;
+  margin-top: 2rem; position: relative; background: white; border-radius: 0.5rem;
+  .chartWrapper {
+    width: 100%; height: 400px; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1rem; box-sizing: border-box; display: flex; flex-direction: column;
+    .dataRange { display: flex; margin-bottom: 1rem; color: #6b7280; font-size: 0.875rem; }
+  }
+  
+  & > div {
+    width: 100%;
+    min-height: 400px;
+    height: 50vh;
+    margin-top: 1rem;
+    position: relative;
+  }
+  
+  // .recharts-wrapper,
+  // .recharts-surface,
+  // .recharts-cartesian {
+  //   position: absolute !important;
+  //   top: 0;
+  //   left: 0;
+  //   right: 0;
+  //   bottom: 0;
+  //   width: 100% !important;
+  //   height: 100% !important;
+  //   overflow: visible !important;
+  // }
+  
+  .recharts-cartesian-axis-tick {
+    font-size: 0.75rem;
+    color: #6b7280;
+  }
+  
+  .recharts-line {
+    shape-rendering: geometricPrecision;
+  }
 }
 
 .chartTitle {

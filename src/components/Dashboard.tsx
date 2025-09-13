@@ -7,6 +7,7 @@ import Favorites from './Favorites';
 import type { ICoin } from '../types';
 import type { IDashboardProps } from '../types';
 import './Dashboard.scss';
+// import { usePolling } from '../hooks/usePolling';
 
 const Dashboard: FC<IDashboardProps> = ({ favorites, toggleFavorite }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -14,8 +15,10 @@ const Dashboard: FC<IDashboardProps> = ({ favorites, toggleFavorite }) => {
   const [filteredCoins, setFilteredCoins] = useState<ICoin[]>([]);
   const { coins: allCoins, loading, error } = useCoins(50);
 
+  // usePolling(allCoins, setFilteredCoins);
+    console.log(allCoins ? allCoins[0]?.volume : null, searchQuery);
+
   const handleSearch = (query: string): void => {
-    console.log(searchQuery);
     setSearchQuery(query);
     if (!query) {
       setFilteredCoins(allCoins);

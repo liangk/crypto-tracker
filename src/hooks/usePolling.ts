@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { fetchTickers } from '../utils/api';
 import type { ICoin, ITicker } from '../types';
 
-export const usePolling = (coins: ICoin[], setCoins: React.Dispatch<React.SetStateAction<ICoin[]>>, interval: number = 3000000): void => {
+export const usePolling = (coins: ICoin[], setCoins: React.Dispatch<React.SetStateAction<ICoin[]>>, interval: number = 30000): void => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {

@@ -25,7 +25,7 @@ export const useCoins = (initialLimit: number = 20): ICoinsHook => {
               market_cap: coin.market_cap || 0
             };
           });
-        console.log(enrichedCoins);
+        // console.log(enrichedCoins);
         setCoins(enrichedCoins);
       } catch (err: unknown) {
         setError(err instanceof Error ? err.message : 'Unknown error');

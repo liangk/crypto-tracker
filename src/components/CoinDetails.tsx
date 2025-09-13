@@ -1,10 +1,10 @@
-import { type FC, useState, useEffect } from 'react';
+import { type FC, useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeftIcon, StarIcon } from '@heroicons/react/24/outline';
 import { fetchTicker, fetchHistorical } from '../utils/api';
 import { formatPrice, formatPercent } from '../utils/helpers';
 import LoadingSpinner from './common/LoadingSpinner';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Line } from 'recharts';
 import type { IDetailsProps, ITicker, IHistoricalDataPoint, IHistoricalChart } from '../types';
 import './CoinDetails.scss';
 
@@ -15,6 +15,24 @@ const CoinDetails: FC<IDetailsProps> = ({ favorites, toggleFavorite }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const isFavorite = favorites.includes(id || '');
+
+  const formatDate = (dateString: string | number | Date, options: { includeWeekday?: boolean; format?: 'dayMonth' | 'full' } = {}) => {
+    const { includeWeekday = false, format = 'full' } = options;
+    
+    if (format === 'dayMonth') {
+      return new Date(dateString).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric'
+      });
+    }
+    
+    return new Date(dateString).toLocaleDateString('en-US', {
+      ...(includeWeekday && { weekday: 'short' }),
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -27,7 +45,7 @@ const CoinDetails: FC<IDetailsProps> = ({ favorites, toggleFavorite }) => {
         if (hist && hist.length > 0) {
           setHistorical(
             hist.map((h: IHistoricalDataPoint) => ({
-              date: new Date(h.time_close).toLocaleDateString(),
+              date: h.time_close,
               price: h.close,
             }))
           );
@@ -41,9 +59,20 @@ const CoinDetails: FC<IDetailsProps> = ({ favorites, toggleFavorite }) => {
     loadData();
   }, [id]);
 
+  // Optimize historical data by sampling if too many points
+  const optimizedHistoricalData = useMemo(() => {
+    if (!historical || historical.length <= 100) return historical;
+    
+    const step = Math.ceil(historical.length / 100); // Target ~100 data points
+    return historical.filter((_, index) => index % step === 0);
+  }, [historical]);
+
   if (loading) return <LoadingSpinner />;
-  if (error) return <div className="error">Error: {error}</div>;
-  if (!coin) return <div className="coinNotFound">Coin not found</div>;
+  if (error) return <div className="error">Error loading coin details: {error}</div>;
+  if (!coin) return <div className="not-found">Coin not found</div>;
+
+  // Debug log with data validation
+  console.log('Historical data sample:', historical);
 
   const priceChange = coin.percent_change_24h ?? 0;
   const priceChangeClass = priceChange >= 0 ? 'positive' : 'negative';
@@ -74,7 +103,6 @@ const CoinDetails: FC<IDetailsProps> = ({ favorites, toggleFavorite }) => {
           {formatPercent(priceChange)} (24h)
         </p>
       </div>
-
       <div className="statsGrid">
         <div className="statItem">
           <div className="statLabel">Market Cap</div>
@@ -103,44 +131,56 @@ const CoinDetails: FC<IDetailsProps> = ({ favorites, toggleFavorite }) => {
       </div>
 
       <div className="chartContainer">
-        <h2 className="chartTitle">Price History (Last Month)</h2>
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={historical}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis 
-              dataKey="date" 
-              stroke="#6b7280"
-              tick={{ fontSize: 12 }}
-            />
-            <YAxis 
-              width={80}
-              stroke="#6b7280"
-              tickFormatter={(value) => `$${value}`}
-              tick={{ fontSize: 12 }}
-            />
-            <Tooltip 
-              formatter={(value) => [`$${value}`, 'Price']}
-              labelFormatter={(label) => `Date: ${label}`}
-              contentStyle={{
-                backgroundColor: 'white',
-                border: '1px solid #e5e7eb',
-                borderRadius: '0.375rem',
-                padding: '0.5rem',
-                fontSize: '0.875rem',
-              }}
-              labelStyle={{ color: '#111827', fontWeight: 500 }}
-              itemStyle={{ color: '#111827' }}
-            />
-            <Line 
-              type="monotone" 
-              dataKey="price" 
-              stroke="#3b82f6" 
-              strokeWidth={2} 
-              dot={false} 
-              activeDot={{ r: 6, strokeWidth: 2 }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+        <h3 className="chartTitle">Price History (Last 30 Days)</h3>
+        {historical.length === 0 ? (
+          <p>No historical data available</p>
+        ) : (
+          <div className="chartWrapper">
+            <div className="dataRange">Data range: {formatDate(historical[0]?.date)} to {formatDate(historical[historical.length - 1]?.date)}</div>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={optimizedHistoricalData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+                <XAxis 
+                  dataKey="date" 
+                  tickFormatter={(date) => formatDate(date, { format: 'dayMonth' })}
+                  tick={{ fontSize: 11, fill: '#6b7280' }}
+                  axisLine={false}
+                  tickLine={false}
+                  minTickGap={30}
+                />
+                <YAxis 
+                  domain={['auto', 'auto']} 
+                  tickFormatter={(value) => `$${value >= 1 ? value.toLocaleString(undefined, { maximumFractionDigits: 2 }) : value.toFixed(4)}`}
+                  width={80}
+                  tick={{ fontSize: 11, fill: '#6b7280' }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    background: 'rgba(255, 255, 255, 0.98)',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '0.5rem',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                  }}
+                  formatter={(value: number) => [`$${value >= 1 ? value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : value.toFixed(6)}`, 'Price']}
+                  labelFormatter={(label) => `Date: ${formatDate(label)}`}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="price" 
+                  stroke="#3b82f6"
+                  strokeWidth={3}
+                  dot={false}
+                  isAnimationActive={false}
+                  connectNulls={true}
+                  activeDot={{ r: 6, stroke: '#2563eb', strokeWidth: 2, fill: '#3b82f6' }}
+                />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        )}
       </div>
     </div>
   );

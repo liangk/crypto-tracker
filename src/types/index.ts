@@ -78,7 +78,7 @@ export interface IHistoricalDataPoint {
 }
 
 export interface IHistoricalChart {
-  date: string;
+  date: number;
   price: number;
 }
 
