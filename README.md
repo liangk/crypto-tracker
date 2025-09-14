@@ -4,7 +4,7 @@ A modern React + TypeScript app for tracking cryptocurrency prices with live upd
 
 - **Framework**: React 18 + Vite  
 - **Language**: TypeScript  
-- **Styling**: Tailwind CSS v4 + custom CSS modules/SCSS  
+- **Styling**: CSS Modules and SCSS  
 - **Charts**: Recharts  
 - **HTTP**: Axios
 
@@ -188,7 +188,7 @@ npm run preview
 - **Vite config**: `vite.config.ts`
 - **TypeScript config**: `tsconfig.json`, `tsconfig.app.json`, `tsconfig.node.json`
 - **ESLint config**: `eslint.config.js`
-- **Tailwind v4** enabled globally (if configured); custom styles under `src/components/**` and `src/styles/`
+- Custom styles using CSS Modules (`.module.css`) and SCSS (`.scss`) under `src/components/` and `src/styles/`
 
 No API key is required for CoinGecko's public endpoints used here. Be mindful of rate limits.
 
