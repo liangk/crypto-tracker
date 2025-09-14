@@ -1,4 +1,4 @@
-import { type FC, useState } from 'react';
+import { type FC, useState, useEffect } from 'react';
 import { useCoins } from '../hooks/useCoins';
 import LoadingSpinner from './common/LoadingSpinner';
 import SearchBar from './SearchBar';
@@ -7,41 +7,44 @@ import Favorites from './Favorites';
 import type { ICoin } from '../types';
 import type { IDashboardProps } from '../types';
 import './Dashboard.scss';
-// import { usePolling } from '../hooks/usePolling';
+import { usePolling } from '../hooks/usePolling';
 
 const Dashboard: FC<IDashboardProps> = ({ favorites, toggleFavorite }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortBy, setSortBy] = useState<string>('market_cap_desc');
   const [filteredCoins, setFilteredCoins] = useState<ICoin[]>([]);
-  const { coins: allCoins, loading, error } = useCoins(50);
+  const { coins: allCoins, loading, error, setCoins } = useCoins(50);
 
-  // usePolling(allCoins, setFilteredCoins);
-    console.log(allCoins ? allCoins[0]?.volume : null, searchQuery);
+  // Continuously merge fresh ticker data into the source-of-truth list
+  usePolling(allCoins, setCoins);
 
   const handleSearch = (query: string): void => {
     setSearchQuery(query);
-    if (!query) {
-      setFilteredCoins(allCoins);
-    } else {
-      const lowerQuery = query.toLowerCase();
-      setFilteredCoins(
-        allCoins.filter((coin: ICoin) =>
-          coin.name.toLowerCase().includes(lowerQuery) || coin.symbol.toLowerCase().includes(lowerQuery)
-        )
-      );
-    }
   };
 
   const handleSort = (key: string): void => {
     setSortBy(key);
-    const sorted: ICoin[] = [...filteredCoins].sort((a: ICoin, b: ICoin) => {
-      if (key === 'price_asc') return (a.price || 0) - (b.price || 0);
-      if (key === 'change_desc') return (b.change || 0) - (a.change || 0);
-      return 0;
-    });
-    console.log(sorted);
-    setFilteredCoins(sorted);
   };
+
+  // Derive the visible list from the source coins + current UI controls
+  useEffect(() => {
+    let list: ICoin[] = allCoins;
+
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter((coin) =>
+        coin.name.toLowerCase().includes(q) || coin.symbol.toLowerCase().includes(q)
+      );
+    }
+
+    if (sortBy === 'price_asc') {
+      list = [...list].sort((a, b) => (a.price || 0) - (b.price || 0));
+    } else if (sortBy === 'change_desc') {
+      list = [...list].sort((a, b) => (b.change || 0) - (a.change || 0));
+    }
+
+    setFilteredCoins(list);
+  }, [allCoins, searchQuery, sortBy]);
 
   if (loading) return <LoadingSpinner />;
   if (error) return <div className="error">Error: {error}</div>;

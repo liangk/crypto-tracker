@@ -1,3 +1,5 @@
+import type { Dispatch, SetStateAction } from 'react';
+
 export interface ICoinBase {
   id: string;
   name: string;
@@ -38,6 +40,7 @@ export interface ICoinsHook {
   coins: ICoin[];
   loading: boolean;
   error: string | null;
+  setCoins: Dispatch<SetStateAction<ICoin[]>>;
 }
 
 export interface IQuoteUSD {

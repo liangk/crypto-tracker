@@ -12,7 +12,7 @@ export const useCoins = (initialLimit: number = 20): ICoinsHook => {
       try {
         setLoading(true);
         setError(null);
-        const tickerRes = await fetchTickers();
+        const tickerRes = await fetchTickers(initialLimit, 1);
         const enrichedCoins: ICoin[] = tickerRes
           .slice(0, initialLimit)
           .map((coin: ITicker) => {
@@ -36,5 +36,5 @@ export const useCoins = (initialLimit: number = 20): ICoinsHook => {
     loadData();
   }, [initialLimit]);
 
-  return { coins, loading, error };
+  return { coins, loading, error, setCoins };
 };

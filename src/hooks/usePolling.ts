@@ -4,22 +4,30 @@ import type { ICoin, ITicker } from '../types';
 
 export const usePolling = (coins: ICoin[], setCoins: React.Dispatch<React.SetStateAction<ICoin[]>>, interval: number = 30000): void => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const coinsRef = useRef<ICoin[]>(coins);
 
+  // Keep latest coins in a ref without resetting the timer
+  useEffect(() => {
+    coinsRef.current = coins;
+  }, [coins]);
+
+  // Start polling on mount or when interval changes
   useEffect(() => {
     intervalRef.current = setInterval(async () => {
       try {
-        const tickerRes: ITicker[] = await fetchTickers();
+        const perPage = Math.min(250, Math.max(1, coinsRef.current.length || 50));
+        const tickerRes: ITicker[] = await fetchTickers(perPage, 1);
         const tickerMap: Map<string, ITicker> = new Map(tickerRes.map((t: ITicker) => [t.id, t]));
         setCoins((prevCoins: ICoin[]) =>
           prevCoins.map((coin: ICoin) => {
             const ticker = tickerMap.get(coin.id);
             return {
               ...coin,
-              price: ticker?.price || 0,
-              change: ticker?.percent_change_24h || 0,
-              volume: ticker?.total_volume || 0,
-              percent_change_24h: ticker?.percent_change_24h || 0,
-              market_cap: ticker?.market_cap || 0
+              price: ticker?.price ?? coin.price,
+              change: ticker?.percent_change_24h ?? coin.change,
+              volume: ticker?.total_volume ?? coin.volume,
+              percent_change_24h: ticker?.percent_change_24h ?? coin.percent_change_24h,
+              market_cap: ticker?.market_cap ?? coin.market_cap
             };
           })
         );
@@ -31,5 +39,5 @@ export const usePolling = (coins: ICoin[], setCoins: React.Dispatch<React.SetSta
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [coins, setCoins, interval]);
+  }, [interval, setCoins]);
 };
