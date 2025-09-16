@@ -37,3 +37,13 @@
     color: #f9fafb;
   }
 }
+
+/* Responsive table */
+@media (max-width: 768px) {
+  .dashboard {
+    .filterContainer { display: flex; flex-direction: column; gap: 1rem;
+      input { width: 100%; }
+      .sortContainer { width: 100%; }
+    }
+  }
+}
