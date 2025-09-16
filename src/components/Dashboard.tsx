@@ -39,8 +39,16 @@ const Dashboard: FC<IDashboardProps> = ({ favorites, toggleFavorite }) => {
 
     if (sortBy === 'price_asc') {
       list = [...list].sort((a, b) => (a.price || 0) - (b.price || 0));
+    } else if (sortBy === 'price_desc') {
+      list = [...list].sort((a, b) => (b.price || 0) - (a.price || 0));
+    } else if (sortBy === 'change_asc') {
+      list = [...list].sort((a, b) => (a.change || 0) - (b.change || 0));
     } else if (sortBy === 'change_desc') {
       list = [...list].sort((a, b) => (b.change || 0) - (a.change || 0));
+    } else if (sortBy === 'market_cap_asc') {
+      list = [...list].sort((a, b) => (a.market_cap || 0) - (b.market_cap || 0));
+    } else if (sortBy === 'market_cap_desc') {
+      list = [...list].sort((a, b) => (b.market_cap || 0) - (a.market_cap || 0));
     }
 
     setFilteredCoins(list);
@@ -57,7 +65,11 @@ const Dashboard: FC<IDashboardProps> = ({ favorites, toggleFavorite }) => {
         <div className="sortContainer">
           <select onChange={(e) => handleSort(e.target.value)} value={sortBy} className="sortSelect" aria-label="Sort coins">
             <option value="price_asc">Sort by Price Asc</option>
+            <option value="price_desc">Sort by Price Desc</option>
+            <option value="change_asc">Sort by Change Asc</option>
             <option value="change_desc">Sort by Change Desc</option>
+            <option value="market_cap_asc">Sort by Market Cap Asc</option>
+            <option value="market_cap_desc">Sort by Market Cap Desc</option>
           </select>
         </div>
       </div>

@@ -30,7 +30,10 @@ A modern React + TypeScript app for tracking cryptocurrency prices with live upd
 ## Features
 - **Dashboard** with:
   - Search by name/symbol
-  - Client-side sorting
+  - Client-side sorting by:
+    - Price (ascending/descending)
+    - 24h Price Change % (ascending/descending)
+    - Market Cap (ascending/descending)
   - Favorites toggle (stored in localStorage)
   - Live price updates via polling
 - **Coin Details**:
@@ -106,6 +109,11 @@ Why polling does not overwrite fresh data:
 ### Dashboard.tsx
 - **Source-of-truth**: `allCoins` from `useCoins`
 - **Derived list**: `filteredCoins` via `useEffect` from `[allCoins, searchQuery, sortBy]`
+- **Sorting**:
+  - Price (ascending/descending)
+  - 24h Price Change % (ascending/descending)
+  - Market Cap (ascending/descending)
+- Sorting is performed client-side on the filtered results
 - Calls `usePolling(allCoins, setCoins)`
 - Passes `filteredCoins` to `CoinTable` and favorites to both `CoinTable` and `Favorites`.
 

@@ -40,7 +40,16 @@ const CoinDetails: FC<IDetailsProps> = ({ favorites, toggleFavorite }) => {
       try {
         setLoading(true);
         setError(null);
-        const [ticker, hist] = await Promise.all([fetchTicker(id), fetchHistorical(id)]);
+        
+        // Calculate date 30 days ago in YYYY-MM-DD format
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        const formattedDate = thirtyDaysAgo.toISOString().split('T')[0];
+        
+        const [ticker, hist] = await Promise.all([
+          fetchTicker(id), 
+          fetchHistorical(id, formattedDate)
+        ]);
         setCoin(ticker);
         if (hist && hist.length > 0) {
           setHistorical(
